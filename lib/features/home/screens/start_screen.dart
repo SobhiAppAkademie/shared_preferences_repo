@@ -7,7 +7,9 @@ class StartScreen extends StatefulWidget {
   /// Erhalten aus der app.dart die Instanz
   final SharedPreferencesRepository preferencesRepository;
 
-  const StartScreen({super.key, required this.preferencesRepository});
+  final Function(bool) onChangeThemeMode;
+
+  const StartScreen({super.key, required this.preferencesRepository, required this.onChangeThemeMode});
 
   @override
   State<StartScreen> createState() => _StartScreenState();
@@ -20,7 +22,9 @@ class _StartScreenState extends State<StartScreen> {
   @override
   void initState() {
     /// Rufen die lokale DarkMode Variable die auf dem Smartphone/Gerät gespeichert ist
-    isDarkMode = widget.preferencesRepository.getThemeMode();
+    widget.preferencesRepository.getThemeMode().then((value)  {
+      isDarkMode = value;
+    });
     super.initState();
   }
 
@@ -30,14 +34,19 @@ class _StartScreenState extends State<StartScreen> {
       body: Center(
         child: CupertinoSwitch(
             value: isDarkMode,
-            onChanged: (value) {
+            onChanged: (value) async {
               /// Setzen unsere Variable auf unserem Gerät
               widget.preferencesRepository.setThemeMode(value);
-              setState(() {
-                /// Aus Design-Gründen damit der Schalter korrekt umgelegt wird,
-                /// rufen wir die DarkMode-Variable nochmal ab
-                isDarkMode = widget.preferencesRepository.getThemeMode();
+
+              /// Aus Design-Gründen damit der Schalter korrekt umgelegt wird,
+              /// rufen wir die DarkMode-Variable nochmal ab
+              isDarkMode = await widget.preferencesRepository.getThemeMode();
+
+
+              setState(()  {
               });
+
+              widget.onChangeThemeMode(isDarkMode);
             }),
       ),
     );

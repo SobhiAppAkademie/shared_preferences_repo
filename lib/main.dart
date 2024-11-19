@@ -9,10 +9,8 @@ void main() async {
   SharedPreferencesRepository preferencesRepository =
       SharedPreferencesRepository();
 
-  // Unsere interne Init-Methode ausführen
-  // Hier wird die Instanz für den SharedPreferences gesetzt
-  await preferencesRepository.init();
+  bool isDarkMode = await preferencesRepository.getThemeMode();
 
   // Übergeben unser Repository unserer App
-  runApp(App(preferencesRepository: preferencesRepository));
+  runApp(App(preferencesRepository: preferencesRepository, isDarkMode: isDarkMode));
 }
